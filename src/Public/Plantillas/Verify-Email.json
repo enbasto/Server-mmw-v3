@@ -1,0 +1,8 @@
+{
+    "Asunto": "VERFICA TU CUENTA MMW",
+    "html": "C:\\Users\\LENOVO\\Documents\\ENBO\\PROGRAMAS\\SERVER-MMW\\src\\Public\\Plantillas\\Verify-Email.html",
+    "Parametros": {
+        "@sitioDesuscribir":"http://localhost:4000/sitioDesuscribir?parametro=",
+        "@rutaVerificar": "http://localhost:4000/verify-account?parametro="
+    }
+}
