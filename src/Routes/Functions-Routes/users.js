@@ -89,6 +89,9 @@ const functionRegisterUser = async (req, res) => {
       if (registerUser.affectedRows > 0) {
         //enviar Email de verificacion
         console.log(process.env.CONFIRM_EMAIL_PLANTILLA)
+        console.log(process.cwd())
+        console.log(process.cwd() + process.env.CONFIRM_EMAIL_PLANTILLA)
+
         const contenidoPlantilla = fs.readFileSync(process.env.CONFIRM_EMAIL_PLANTILLA, 'utf8');
         const dataEmail = JSON.parse(contenidoPlantilla);
         console.log(dataEmail);
