@@ -37,6 +37,7 @@ const functionRegisterUser = async (req, res) => {
     try {
       // Obtener los datos del cuerpo de la solicitud
       const { nombres, email, password,apellidos, numero_celular, fecha_nacimiento, genero } = req.body;
+      
 
       console.log(req.body);
       const connection = await getConnection();
@@ -87,7 +88,7 @@ const functionRegisterUser = async (req, res) => {
       console.log(registerUser)
       if (registerUser.affectedRows > 0) {
         //enviar Email de verificacion
-
+        console.log(process.env.CONFIRM_EMAIL_PLANTILLA)
         const contenidoPlantilla = fs.readFileSync(process.env.CONFIRM_EMAIL_PLANTILLA, 'utf8');
         const dataEmail = JSON.parse(contenidoPlantilla);
         console.log(dataEmail);
@@ -116,7 +117,7 @@ const functionRegisterUser = async (req, res) => {
         }
       }
     } catch (error) {
-      console.error("Error al registrar usuario:", error);
+      console.log("Error al registrar usuario:", error);
       return res.status(500).json({Type: false, message: "Error interno del servidor" });
     }
 }
