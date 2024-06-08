@@ -95,7 +95,7 @@ const functionRegisterUser = async (req, res) => {
         const contenidoPlantilla = fs.readFileSync(process.cwd() + process.env.CONFIRM_EMAIL_PLANTILLA, 'utf8');
         const dataEmail = JSON.parse(contenidoPlantilla);
         console.log(dataEmail);
-        const contenidoHTML = fs.readFileSync(dataEmail.html, 'utf8');
+        const contenidoHTML = fs.readFileSync(process.cwd() + dataEmail.html, 'utf8');
         parametros = dataEmail.Parametros
         console.log(parametros);
         const EmailCode = encryptEmail(modelUser.email, keyEncryption);
