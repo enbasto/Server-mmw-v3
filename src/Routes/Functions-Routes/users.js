@@ -92,7 +92,7 @@ const functionRegisterUser = async (req, res) => {
         console.log(process.cwd())
         console.log(process.cwd() + process.env.CONFIRM_EMAIL_PLANTILLA)
 
-        const contenidoPlantilla = fs.readFileSync(process.env.CONFIRM_EMAIL_PLANTILLA, 'utf8');
+        const contenidoPlantilla = fs.readFileSync(process.cwd() + process.env.CONFIRM_EMAIL_PLANTILLA, 'utf8');
         const dataEmail = JSON.parse(contenidoPlantilla);
         console.log(dataEmail);
         const contenidoHTML = fs.readFileSync(dataEmail.html, 'utf8');
