@@ -44,25 +44,6 @@ const verificarPasswordUser = async (contraseña, hash) => {
     }
 };
 
-// // Ejemplo de uso
-// const usuario = {
-//     nombre: 'Juan',
-//     email: 'juan@example.com',
-//     password: 'contraseña123',
-//     activo: 1,
-//     uuid: 'tu_uuid_aqui'
-// };
-
-// encriptarPasswordUser(usuario)
-//     .then(usuarioEncriptado => {
-//         console.log('Usuario con contraseña encriptada:', usuarioEncriptado);
-//         // Aquí iría tu lógica para insertar el usuario en la base de datos
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-
-
 
 
 // Función para encriptar el email usando AES
@@ -78,15 +59,15 @@ function encryptEmail(email, key) {
 
 // // La llave para encriptar
 // const key = 'MiLlaveSecreta123456789012345678901';
-const key = '12345678901234567890123456789123456';
+// const key = '12345678901234567890123456789123456';
 
-// El email a encriptar
-const email = 'enbo98@hotmail.com';
+// // // El email a encriptar
+// const encryptedEmail = 'e69482ffd886b5ffb966cc935757b805a21bd0fc7ea5b21ec41ddbdb96bd44d6';
 
-// Encriptar el email
-const encryptedEmail = encryptEmail(email, key);
+// // // Encriptar el email
+// const res = decryptEmail(encryptedEmail, key);
 
-console.log('Email encriptado:', encryptedEmail);
+
 
 ///________________________________________________________________
 // Función para desencriptar el email usando AES
@@ -115,7 +96,7 @@ function decryptEmail(encryptedEmail, key) {
 // // Desencriptar el email
 // const decryptedEmail = decryptEmail(emailEncrip, key);
 
-// console.log('Email desencriptado:', decryptedEmail);
+
 
 module.exports ={
     encriptarPasswordUser,

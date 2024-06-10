@@ -9,7 +9,8 @@ const getConnection = async () => {
     user: process.env.USER_DB,
     password: process.env.PASSWORD_DB,
     database: process.env.DATABASE,
-    port: process.env.PORT_DB
+    port: process.env.PORT_DB,
+    charset: 'utf8mb4'  // Esto es crucial para manejar emojis
   });
   return connection;
 };

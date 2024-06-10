@@ -10,7 +10,7 @@ const SelectNumbers = async (req, res) => {
     const decoded = ValidarToken(req);
 
     // Ahora puedes usar el contenido decodificado del token
-    console.log("Decoded Token:", decoded.id);
+    
     const numbersExistsQuery = "SELECT * FROM numbers WHERE uuid = ?";
     const connection = await getConnection();
 
@@ -59,8 +59,6 @@ const SaveNumber = async (req, res) => {
     // Validar el token
     const decoded = ValidarToken(req);
 
-    // Ahora puedes usar el contenido decodificado del token
-    //   console.log("Decoded Token:", decoded.id);
     const { name, numero_cel } = req.body;
     const numbersExistsQuery =
       "INSERT INTO numbers (nombre,  numero_cel, uuid) VALUES (?,  ?, ?)";
@@ -107,76 +105,23 @@ const SaveNumber = async (req, res) => {
 };
 
 const DeleteNumber = async (req, res) => {
-    try {
-      // Validar el token
-      const decoded = ValidarToken(req);
-  
-      // Ahora puedes usar el contenido decodificado del token
-      //   console.log("Decoded Token:", decoded.id);
-      const { id } = req.body;
-
-//       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
-      const queryString = "DELETE FROM numbers WHERE id = ? and uuid = ?";
-      const connection = await getConnection();
-  
-      // Realizar la conexión a la base de datos
-      connection.connect();
-      const results = await new Promise((resolve, reject) => {
-        connection.query(
-            queryString,
-          [id, decoded.id],
-          (error, results, fields) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(results);
-            }
-          }
-        );
-      });
-      connection.end();
-  
-      if (results.affectedRows > 0) {
-        // Responder con éxito si se encuentran números
-        return res.status(200).json({
-          Type: true,
-          message: "Registro Eliminado Con Exito",
-          Data: results,
-        });
-      } else {
-        // Responder si no se encuentran números
-        return res
-          .status(400)
-          .json({ Type: false, message: "No hay Numeros Registados para eliminar." });
-      }
-    } catch (err) {
-      // Manejar el error si el token no es válido o ha expirado
-      console.error("Error verificando el token:", err);
-      return res.status(401).json({
-        Type: false,
-        message: "No autorizado para realizar esta transacción",
-      });
-    }
-  };
-
-const SaveNumberPlantilla = async (req, res) => {
   try {
     // Validar el token
     const decoded = ValidarToken(req);
 
     // Ahora puedes usar el contenido decodificado del token
-    //   console.log("Decoded Token:", decoded.id);
-    const { name, numero_cel } = req.body;
-    const numbersExistsQuery =
-      "INSERT INTO numbers (nombre,  numero_cel, uuid) VALUES (?,  ?, ?)";
+    const { id } = req.body;
+
+    //       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
+    const queryString = "DELETE FROM numbers WHERE id = ? and uuid = ?";
     const connection = await getConnection();
 
     // Realizar la conexión a la base de datos
     connection.connect();
     const results = await new Promise((resolve, reject) => {
       connection.query(
-        numbersExistsQuery,
-        [name, numero_cel, decoded.id],
+        queryString,
+        [id, decoded.id],
         (error, results, fields) => {
           if (error) {
             reject(error);
@@ -192,14 +137,17 @@ const SaveNumberPlantilla = async (req, res) => {
       // Responder con éxito si se encuentran números
       return res.status(200).json({
         Type: true,
-        message: "Registro Creado Con Exito",
+        message: "Registro Eliminado Con Exito",
         Data: results,
       });
     } else {
       // Responder si no se encuentran números
       return res
         .status(400)
-        .json({ Type: false, message: "No se encontraron números" });
+        .json({
+          Type: false,
+          message: "No hay Numeros Registados para eliminar.",
+        });
     }
   } catch (err) {
     // Manejar el error si el token no es válido o ha expirado
@@ -211,9 +159,116 @@ const SaveNumberPlantilla = async (req, res) => {
   }
 };
 
+const DeleteAllNumbers = async (req, res) => {
+  try {
+    // Validar el token
+    const decoded = ValidarToken(req);
+
+    // Ahora puedes usar el contenido decodificado del token
+
+    //       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
+    const queryString = "DELETE FROM numbers WHERE uuid = ?";
+    const connection = await getConnection();
+
+    // Realizar la conexión a la base de datos
+    connection.connect();
+    const results = await new Promise((resolve, reject) => {
+      connection.query(
+        queryString,
+        [decoded.id],
+        (error, results, fields) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    });
+    connection.end();
+
+    if (results.affectedRows > 0) {
+      // Responder con éxito si se encuentran números
+      return res.status(200).json({
+        Type: true,
+        message: "Registros Eliminados Con Exito",
+        Data: results,
+      });
+    } else {
+      // Responder si no se encuentran números
+      return res
+        .status(400)
+        .json({
+          Type: false,
+          message: "No hay Numeros Registados para eliminar.",
+        });
+    }
+  } catch (err) {
+    // Manejar el error si el token no es válido o ha expirado
+    console.error("Error verificando el token:", err);
+    return res.status(401).json({
+      Type: false,
+      message: "No autorizado para realizar esta transacción",
+    });
+  }
+};
+
+const SaveNumberPlantilla = async (req, res) => {
+  try {
+    // Validar el token
+    const decoded = ValidarToken(req);
+    const numbers = req.body; // Arreglo de números a insertar
+
+    
+    
+    // Consulta SQL para insertar un número en la tabla
+    const insertQuery =
+      "INSERT INTO numbers (nombre, numero_cel, uuid) VALUES (?, ?, ?)";
+
+    const connection = await getConnection();
+
+    // Realizar la conexión a la base de datos
+    connection.connect();
+
+    // Iterar sobre cada número del arreglo y realizar la inserción
+    for (const number of numbers) {
+      
+      await new Promise((resolve, reject) => {
+        connection.query(
+          insertQuery,
+          [number.nombre, number.numero_cel, decoded.id],
+          (error, results, fields) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(results);
+            }
+          }
+        );
+      });
+    }
+
+    connection.end();
+
+    // Responder con éxito si se insertaron los números
+    return res.status(200).json({
+      Type: true,
+      message: "Registros Creados Con Éxito",
+    });
+  } catch (err) {
+    // Manejar el error si el token no es válido o ha expirado
+    console.error("Error verificando el token:", err);
+    return res.status(401).json({
+      Type: false,
+      message: "No autorizado para realizar esta transacción",
+    });
+  }
+};
+
 module.exports = {
-    SelectNumbers,
+  SelectNumbers,
   SaveNumber,
   DeleteNumber,
+  DeleteAllNumbers,
   SaveNumberPlantilla,
 };

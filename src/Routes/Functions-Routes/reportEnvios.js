@@ -5,46 +5,40 @@ const { getConnection } = require("../../DB/connect-db");
 const jwt = require("jsonwebtoken");
 const { ValidarToken } = require("./validarToken");
 
-const SelectMessages = async (req, res) => {
+const SelectReports = async (req, res) => {
   try {
     // Validar el token
     const decoded = ValidarToken(req);
 
-    const messageExistsQuery = "SELECT * FROM messages WHERE uuid = ?";
+    const Query = "SELECT * FROM reportmessage WHERE uuid = ?";
     const connection = await getConnection();
 
     // Realizar la conexión a la base de datos
     connection.connect();
-    const existingMessages = await new Promise((resolve, reject) => {
-      connection.query(
-        messageExistsQuery,
-        [decoded.id],
-        (error, results, fields) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
+    const existing = await new Promise((resolve, reject) => {
+      connection.query(Query, [decoded.id], (error, results, fields) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
         }
-      );
+      });
     });
     connection.end();
 
-    if (existingMessages.length > 0) {
+    if (existing.length > 0) {
       // Responder con éxito si se encuentran números
       return res.status(200).json({
         Type: true,
         message: "Transacción realizada con éxito",
-        Data: existingMessages,
+        Data: existing,
       });
     } else {
       // Responder si no se encuentran números
-      return res
-        .status(400)
-        .json({
-          Type: false,
-          message: "No se encontraron Mensajes Registrados",
-        });
+      return res.status(400).json({
+        Type: false,
+        message: "No se encontraron Reportes Registrados",
+      });
     }
   } catch (err) {
     // Manejar el error si el token no es válido o ha expirado
@@ -56,90 +50,25 @@ const SelectMessages = async (req, res) => {
   }
 };
 
-const SelectMessage = async (req, res) => {
-  try {
-    // Validar el token
-    const decoded = ValidarToken(req);
-    const { Abreviacion } = req.body;
-    
-    // Ahora puedes usar el contenido decodificado del 
-    const messageExistsQuery = "SELECT * FROM messages WHERE id = ? and uuid = ?";
-    const connection = await getConnection();
-
-    // Realizar la conexión a la base de datos
-    connection.connect();
-    const existingMessage = await new Promise((resolve, reject) => {
-      connection.query(
-        messageExistsQuery,
-        [Abreviacion,decoded.id],
-        (error, results, fields) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        }
-      );
-    });
-    connection.end();
-
-    if (existingMessage.length > 0) {
-      // Responder con éxito si se encuentran números
-      return res.status(200).json({
-        Type: true,
-        message: "Transacción realizada con éxito",
-        Data: existingMessage[0],
-      });
-    } else {
-      // Responder si no se encuentran números
-      return res
-        .status(400)
-        .json({
-          Type: false,
-          message: "No se encontraron Mensajes Registrados",
-        });
-    }
-  } catch (err) {
-    // Manejar el error si el token no es válido o ha expirado
-    console.error("Error verificando el token:", err);
-    return res.status(401).json({
-      Type: false,
-      message: "No autorizado para realizar esta transacción",
-    });
-  }
-};
-
-const SaveMessages = async (req, res) => {
+const SaveReport = async (req, res) => {
   try {
     // Validar el token
     const decoded = ValidarToken(req);
 
-    const {
-      abbreviationMessage,
-      textMessage,
-      media,
-      rutaDestino,
-      tiempoInterval,
-    } = req.body;
+    const { phone, message, urlMedia, respestaEnvio } = req.body;
 
     
-    const numbersExistsQuery =
-      "INSERT INTO messages (abreviacion, message, media, urlmedia, intervaloMessage, uuid) VALUES (?, ?, ?, ?, ?, ?)";
+
+    const queryString =
+      "INSERT INTO reportmessage ( numero_cel, message, urlMedia, estadoEnvio,uuid) VALUES (?, ?, ?, ?, ?)";
     const connection = await getConnection();
 
     // Realizar la conexión a la base de datos
     connection.connect();
     const results = await new Promise((resolve, reject) => {
       connection.query(
-        numbersExistsQuery,
-        [
-          abbreviationMessage,
-          textMessage,
-          media,
-          rutaDestino,
-          tiempoInterval,
-          decoded.id,
-        ],
+        queryString,
+        [phone, message, urlMedia, respestaEnvio, decoded.id],
         (error, results, fields) => {
           if (error) {
             reject(error);
@@ -155,14 +84,14 @@ const SaveMessages = async (req, res) => {
       // Responder con éxito si se encuentran números
       return res.status(200).json({
         Type: true,
-        message: "Registro Creado Con Exito",
+        message: "Reporte Creado Con Exito",
         Data: results,
       });
     } else {
       // Responder si no se encuentran números
       return res
         .status(400)
-        .json({ Type: false, message: "No se pudo Registrar el mensaje" });
+        .json({ Type: false, message: "No se pudo Registrar el Reporte" });
     }
   } catch (err) {
     // Manejar el error si el token no es válido o ha expirado
@@ -174,8 +103,7 @@ const SaveMessages = async (req, res) => {
   }
 };
 
-
-const DeleteMessages = async (req, res) => {
+const Deletereport = async (req, res) => {
   try {
     // Validar el token
     const decoded = ValidarToken(req);
@@ -183,15 +111,15 @@ const DeleteMessages = async (req, res) => {
     // Ahora puedes usar el contenido decodificado del token
     const { id } = req.body;
 
-//       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
-    const queryString = "DELETE FROM messages WHERE id = ? and uuid = ?";
+    //       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
+    const queryString = "DELETE FROM reportmessage WHERE id = ? and uuid = ?";
     const connection = await getConnection();
 
     // Realizar la conexión a la base de datos
     connection.connect();
     const results = await new Promise((resolve, reject) => {
       connection.query(
-          queryString,
+        queryString,
         [id, decoded.id],
         (error, results, fields) => {
           if (error) {
@@ -215,7 +143,64 @@ const DeleteMessages = async (req, res) => {
       // Responder si no se encuentran números
       return res
         .status(400)
-        .json({ Type: false, message: "No hay Numeros Registados para eliminar." });
+        .json({
+          Type: false,
+          message: "No hay Reportes Registados para eliminar.",
+        });
+    }
+  } catch (err) {
+    // Manejar el error si el token no es válido o ha expirado
+    console.error("Error verificando el token:", err);
+    return res.status(401).json({
+      Type: false,
+      message: "No autorizado para realizar esta transacción",
+    });
+  }
+};
+
+const DeleteAllReports = async (req, res) => {
+  try {
+    // Validar el token
+    const decoded = ValidarToken(req);
+
+    // Ahora puedes usar el contenido decodificado del tok
+
+    //       // Consulta SQL para obtener el usuario correspondiente a la contraseña proporcionada
+    const queryString = "DELETE FROM reportmessage WHERE uuid = ?";
+    const connection = await getConnection();
+
+    // Realizar la conexión a la base de datos
+    connection.connect();
+    const results = await new Promise((resolve, reject) => {
+      connection.query(
+        queryString,
+        [decoded.id],
+        (error, results, fields) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        }
+      );
+    });
+    connection.end();
+
+    if (results.affectedRows > 0) {
+      // Responder con éxito si se encuentran números
+      return res.status(200).json({
+        Type: true,
+        message: "Registros Eliminados Con Exito",
+        Data: results,
+      });
+    } else {
+      // Responder si no se encuentran números
+      return res
+        .status(400)
+        .json({
+          Type: false,
+          message: "No hay Reportes Registados para eliminar.",
+        });
     }
   } catch (err) {
     // Manejar el error si el token no es válido o ha expirado
@@ -228,8 +213,8 @@ const DeleteMessages = async (req, res) => {
 };
 
 module.exports = {
-  SelectMessages,
-  SelectMessage,
-  SaveMessages,
-  DeleteMessages
+  SelectReports,
+  SaveReport,
+  Deletereport,
+  DeleteAllReports
 };

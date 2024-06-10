@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// console.log(transporter);
+
 // Datos del correo electrónico
 const mailParams = {
   from: "tu_correo@example.com", // Cambia esto por tu dirección de correo electrónico
@@ -27,7 +27,7 @@ const EnviarEmail = (mailOptions) => {
         console.error("Error al enviar el correo electrónico:", error);
         reject(error); // Rechaza la promesa con el error
       } else {
-        // console.log("Correo electrónico enviado:", info.response);
+        
         resolve(info.response); // Resuelve la promesa con la respuesta del envío
          
       }

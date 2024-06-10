@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer();
 const routes = require('./Routes/routes');
 
 const app = express();
@@ -11,6 +13,7 @@ app.set('views', './Templates'); // Directorio donde se encuentran las plantilla
 app.use(express.static('public'));
 // Middleware para parsear el cuerpo de las solicitudes como JSON
 app.use(bodyParser.json());
+app.use(upload.any())
 // Rutas definidas en el archivo routes.js
 app.use('/', routes);
 
