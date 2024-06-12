@@ -259,6 +259,7 @@ const ResetPasswordUser = async (req, res) => {
         valueParametros
       );
     }
+    contenidoHTMLModificado = contenidoHTMLModificado.replace("@nombre", existingUser[0].nombres)
     const mailParams = {
       from: "MMW", // Cambia esto por tu dirección de correo electrónico
       to: existingUser[0].email, // Cambia esto por la dirección de correo electrónico del destinatario
